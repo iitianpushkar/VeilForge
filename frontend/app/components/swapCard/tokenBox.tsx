@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import TokenSelect from "./tokenSelect";
 import { Token } from "../../types/tokens";
@@ -17,6 +18,15 @@ type Props = {
   onSelectChain?: (chain: Chain) => void;
 };
 
+function getTokenLogo(symbol: string): string | null {
+  const upper = symbol.toUpperCase();
+  if (upper === "ETH") return "/eth.png";
+  if (upper === "WETH") return "/weth.png";
+  if (upper === "USDC") return "/usdc.png";
+  if(upper === "USDT") return "/usdt.png"
+  return null;
+}
+
 export default function TokenBox({
   label,
   chain,
@@ -29,6 +39,8 @@ export default function TokenBox({
 }: Props) {
   const [openToken, setOpenToken] = useState(false);
   const [openChain, setOpenChain] = useState(false);
+
+  const logoSrc = getTokenLogo(token);
 
   return (
     <>
@@ -75,8 +87,17 @@ export default function TokenBox({
               transition
             "
           >
-            {/* Token icon placeholder */}
-            <div className="h-8 w-8 rounded-full bg-black/5" />
+            {logoSrc ? (
+              <Image
+                src={logoSrc}
+                alt={token}
+                width={32}
+                height={32}
+                className="h-8 w-8 rounded-full"
+              />
+            ) : (
+              <div className="h-8 w-8 rounded-full bg-black/5" />
+            )}
 
             <span className="text-sm font-medium text-black">
               {token}

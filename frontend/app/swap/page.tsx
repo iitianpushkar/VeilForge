@@ -50,9 +50,9 @@ export default function SwapModal() {
 
             <button
               onClick={() => setShowSettings(true)}
-              className="text-black/40 hover:text-black transition"
+              className="absolute right-6 text-black/60 hover:text-black transition"
             >
-              ⚙
+               ⚙️
             </button>
           </div>
 

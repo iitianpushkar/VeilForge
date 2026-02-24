@@ -1,6 +1,6 @@
 import { HTTPCapability, handler, type Runtime, type HTTPPayload, Runner, HTTPSendRequester, ok, cre, consensusIdenticalAggregation, decodeJson} from "@chainlink/cre-sdk"
 import {Config, req} from "./types"
-import {askGemini} from "./gemini"
+import {askLLM} from "./llm"
 
 // Callback function that runs when an HTTP request is received
 const onHttpTrigger = (runtime: Runtime<Config>, payload: HTTPPayload): any => {
@@ -24,17 +24,15 @@ const onHttpTrigger = (runtime: Runtime<Config>, payload: HTTPPayload): any => {
 
   runtime.log(`dex: ${poolDetails[0].dex}`)
 
-  const result = askGemini(runtime, reqData, poolDetails[0].dex)
+  const result = askLLM(runtime, reqData, poolDetails[0].dex)
 
-  runtime.log(`gemini response: ${result.geminiResponse}`)
-
-  return result
+  return "processed"
 }
 
 
 const discoverPools = (runtime: Runtime<Config>,secret:string, payload: req)=>(sendRequester: HTTPSendRequester, config:Config) : any => {
 
-  const url = `${config.url}/networks/${payload.network}/tokens/${payload.fromToken}/pools`
+  const url = `${config.url}/networks/${payload.network}/tokens/${payload.fromToken.address}/pools`
 
   const discovered = sendRequester.sendRequest({
     url: url,
@@ -52,7 +50,7 @@ const discoverPools = (runtime: Runtime<Config>,secret:string, payload: req)=>(s
 
   const pools = Array.isArray(poolsData?.data) ? poolsData.data : [];
 
-  const toLc = String(payload.toToken).toLowerCase();
+  const toLc = String(payload.toToken.address).toLowerCase();
 
   const matchedPools = pools.filter((pool:any) => {
     const baseTokenId = pool?.relationships?.base_token?.data?.id || '';
@@ -63,7 +61,7 @@ const discoverPools = (runtime: Runtime<Config>,secret:string, payload: req)=>(s
       return baseAddr.toLowerCase() === toLc || quoteAddr.toLowerCase() === toLc;
     });
 
-	runtime.log(`Matched ${matchedPools.length} pools for pair ${payload.fromToken}/${payload.toToken}`);
+	runtime.log(`Matched ${matchedPools.length} pools for pair ${payload.fromToken.address}/${payload.toToken.address}`);
 
 	const poolAddresses = matchedPools
       .map((pool:any) => pool?.attributes?.address)
@@ -99,8 +97,8 @@ const discoverPools = (runtime: Runtime<Config>,secret:string, payload: req)=>(s
 
 	const sorted = calculateBestQuotes(results,{
 		amountIn:payload.amountIn,
-		fromToken:payload.fromToken,
-		toToken:payload.toToken
+		fromToken:payload.fromToken.address,
+		toToken:payload.toToken.address
 	})
 
 	runtime.log(`sorted ${sorted.length} pools for pair ${payload.fromToken}/${payload.toToken}`);

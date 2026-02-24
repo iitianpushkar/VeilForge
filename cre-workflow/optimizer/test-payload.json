@@ -1,0 +1,16 @@
+{
+    "network": "base",
+    "fromToken": {
+        "symbol": "USDC",
+        "address": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "decimals": 6
+    },
+    "toToken": {
+        "symbol": "WETH",
+        "address": "0x4200000000000000000000000000000000000006",
+        "decimals": "18"
+    },
+    "amountIn": "100000",
+    "minAmountOut": "51326631832013",
+    "recipient": "0xe0769E841753B9F53462E7ae8B9b36AC6D9603b9"
+}
