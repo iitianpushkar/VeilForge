@@ -29,8 +29,6 @@ export default function SwapTab({ slippageBps }: Props) {
   const [loading, setLoading] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
 
-  const CHAIN_ID = 1;
-
   async function fetchSwapQuote() {
     if (!amount || Number(amount) <= 0 || !toToken) return;
   
