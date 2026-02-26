@@ -198,7 +198,7 @@ function UserTooltip() {
 
       {zkID ? (
         <>
-          <InfoRow label="Document" value={zkID.document} />
+          <InfoRow label="uuid" value={zkID.uuid} />
           <InfoRow label="Secret" value={zkID.secret} />
 
           <Link href="/profile">
