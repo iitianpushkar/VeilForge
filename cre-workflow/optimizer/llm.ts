@@ -93,7 +93,7 @@ import {
   Swap request:
   `;
     
-  export const askLLM = (runtime: Runtime<Config>, params: req, dex:string): any => {
+  export const askLLM = (runtime: Runtime<Config>, params: req, dex:string): llmResponse => {
       // API key for the outbound LLM request (stored in CRE secrets)
       const openrouterApiKey = runtime.getSecret({ id: "OPENROUTER_API_KEY" }).result();
 
@@ -113,9 +113,7 @@ import {
 
       runtime.log(`llm response: ${result.Response}`);
 
-      parseLLmResponse(runtime,result)
-
-    return "processed";
+    return result;
   }
   
   const PostGeminiData =

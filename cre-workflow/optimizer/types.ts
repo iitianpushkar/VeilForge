@@ -30,7 +30,9 @@ export const configSchema = z.object({
     },
     amountIn: string,
     minAmountOut:string,
-    recipient:string
+    recipient:string,
+    idProof:string,
+    withdrawProof:string
   } 
 
   export type llmResponse = {

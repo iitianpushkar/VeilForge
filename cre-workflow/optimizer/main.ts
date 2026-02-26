@@ -1,8 +1,8 @@
 import { HTTPCapability, handler, type Runtime, type HTTPPayload, Runner, HTTPSendRequester, ok, cre, consensusIdenticalAggregation, decodeJson} from "@chainlink/cre-sdk"
 import {Config, req} from "./types"
 import {askLLM} from "./llm"
+import { settleTrade, parseLLmResponse } from "./executor"
 
-// Callback function that runs when an HTTP request is received
 const onHttpTrigger = (runtime: Runtime<Config>, payload: HTTPPayload): any => {
   runtime.log(`HTTP trigger received`)
 
@@ -24,7 +24,11 @@ const onHttpTrigger = (runtime: Runtime<Config>, payload: HTTPPayload): any => {
 
   runtime.log(`dex: ${poolDetails[0].dex}`)
 
-  const result = askLLM(runtime, reqData, poolDetails[0].dex)
+  const result = askLLM(runtime, reqData, poolDetails[0].dex);
+
+  const parsedResponse = parseLLmResponse(runtime,result);
+
+  settleTrade(runtime,parsedResponse.routerAddress,parsedResponse.Interface,parsedResponse.parameters,reqData.idProof, reqData.withdrawProof);
 
   return "processed"
 }

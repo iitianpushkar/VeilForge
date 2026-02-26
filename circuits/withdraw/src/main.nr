@@ -3,10 +3,6 @@ mod merkle_tree;
 
 fn main(
     // Public inputs
-    toToken: pub Field,
-    dstEid: pub Field,
-    slippageBps: pub Field,
-    
     root: pub Field,
     nullifier_hash: pub Field,
     recipient: pub Field,

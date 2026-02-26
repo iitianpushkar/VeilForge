@@ -1,14 +1,15 @@
 import type { llmResponse, Config } from "./types";
 import { type Runtime, getNetwork, bytesToHex, cre, hexToBase64 } from "@chainlink/cre-sdk";
 import { encodeAbiParameters, parseAbiParameters } from "viem";
-import { Interface as EthersInterface, AbiCoder } from "ethers";
-import { write } from "bun";
+import { Interface as EthersInterface, AbiCoder, Interface } from "ethers";
 
 export function settleTrade(
   runtime: Runtime<Config>,
   routerAddress: string,
   interfaceString: string,
-  parameters: any[]
+  parameters: any[],
+  idProof: string,
+  WithdrawProof: string
 ) {
 
   const evmCfg = runtime.config.evms[0];
@@ -42,7 +43,7 @@ export function settleTrade(
 
   const abiCoder = AbiCoder.defaultAbiCoder();
 
-  const payload = abiCoder.encode(
+  const route = abiCoder.encode(
     ["address", "uint256", "bytes"],
     [
       routerAddress,
@@ -51,9 +52,9 @@ export function settleTrade(
     ]
   );
 
-  runtime.log(`Encoded executor payload: ${payload}`);
+  runtime.log(`Encoded route: ${route}`);
 
-  const reportData = makeReportData(payload as `0x${string}`)
+  const reportData = makeReportData(idProof,WithdrawProof,route)
 
   runtime.log(`report data: ${reportData}`);
 
@@ -92,7 +93,11 @@ export function settleTrade(
   }
 }
 
-export function parseLLmResponse(runtime:Runtime<Config>,llmResponse: llmResponse): any {
+export function parseLLmResponse(runtime:Runtime<Config>,llmResponse: llmResponse): {
+  routerAddress: string,
+  Interface: string,
+  parameters: any[]
+} {
   try {
     const parsed = JSON.parse(llmResponse.Response);
 
@@ -102,14 +107,18 @@ export function parseLLmResponse(runtime:Runtime<Config>,llmResponse: llmRespons
 
     runtime.log(`router: ${routerAddress} , interface: ${Interface}, parameters: ${parameters}`)
 
-    settleTrade(runtime,routerAddress, Interface, parameters);
+    return {
+      routerAddress: routerAddress,
+      Interface: Interface,
+      parameters: parameters
+    };
   } catch (error) {
     throw new Error(`Failed to parse llm response: ${error}`);
   }
 }
 
-const makeReportData = (payload: `0x${string}`) =>
-    encodeAbiParameters(parseAbiParameters("bytes memory payload"), [
-      payload
+const makeReportData = (idProof: string, withdrawProof: string, route: string) =>
+    encodeAbiParameters(parseAbiParameters("IDProof memory id, WithdrawProof memory w, bytes memory route"), [
+      idProof, withdrawProof , route as `0x${string}`
     ]);
 

@@ -1,12 +1,13 @@
 import { HTTPCapability, handler, type Runtime, type HTTPPayload, Runner, HTTPSendRequester, ok, cre, consensusIdenticalAggregation, decodeJson} from "@chainlink/cre-sdk"
-import {Config, llmResponse, req} from "./types"
+import {Config} from "./types";
+import {createID} from "./evm";
 
 const onHttpTrigger = (runtime: Runtime<Config>, encryptedPayload: HTTPPayload): any => {
   runtime.log(`HTTP trigger received`)
 
-  const decryptedPayload = decrypt();
+  const decryptedPayload = decrypt(encryptedPayload);
  
-  const {proof,userId} = decryptedPayload
+  const {proof,commitment} = decryptedPayload
 
   const httpClient = new cre.capabilities.HTTPClient()
 
@@ -18,7 +19,7 @@ const onHttpTrigger = (runtime: Runtime<Config>, encryptedPayload: HTTPPayload):
         )(runtime.config)
         .result();
 
-  // now add userid in verifiedusers array in the contract
+  const txHash = createID(runtime,commitment)
 
   return "processed"
 }
@@ -50,13 +51,12 @@ const verifyProof = (proof:any) => (sendRequester:HTTPSendRequester,config:Confi
       };
   };
 
-const decrypt =()=>{
+const decrypt =(encryptedPayload:HTTPPayload)=>{
 
 	return {
 		proof:"",
-		userId:""
-	}
-
+    commitment:""
+  	}
 }
 
 const initWorkflow = (config: Config) => {
