@@ -6,8 +6,7 @@ import "./withdrawLib.sol";
 
 uint256 constant N = 8192;
 uint256 constant LOG_N = 13;
-uint256 constant NUMBER_OF_PUBLIC_INPUTS = 9;
-
+uint256 constant NUMBER_OF_PUBLIC_INPUTS = 6;
 
 struct ShpleminiIntermediates {
     Fr unshiftedScalar;

@@ -2,10 +2,10 @@ import type { Config } from "./types";
 import { type Runtime, getNetwork, bytesToHex, cre, hexToBase64 } from "@chainlink/cre-sdk";
 import { encodeAbiParameters, parseAbiParameters } from "viem";
 
-export function createID(
+export const createID = (
   runtime: Runtime<Config>,
   commitment:string
-) {
+):any => {
 
   runtime.log(`commitment: ${commitment}`);
 
@@ -21,7 +21,7 @@ export function createID(
     throw new Error(`Unknown chain name: ${evmCfg.chainSelectorName}`);
   }
 
-  runtime.log(`Preparing trade execution via executor: ${evmCfg.executorAddress}`);
+  runtime.log(`Preparing identity creation via executor: ${evmCfg.executorAddress}`);
 
   const evmClient = new cre.capabilities.EVMClient(network.chainSelector.selector);
 
@@ -54,7 +54,7 @@ export function createID(
   if(writeResult.txHash){
     const txHash = bytesToHex(writeResult.txHash);
 
-    runtime.log(`Trade execution tx sent: ${txHash}`);
+    runtime.log(`ID creation tx sent: ${txHash}`);
 
     return txHash;
   }

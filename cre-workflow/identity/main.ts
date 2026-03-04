@@ -1,13 +1,15 @@
 import { HTTPCapability, handler, type Runtime, type HTTPPayload, Runner, HTTPSendRequester, ok, cre, consensusIdenticalAggregation, decodeJson} from "@chainlink/cre-sdk"
-import {Config} from "./types";
+import {Config, userDataSchema} from "./types";
 import {createID} from "./evm";
 
-const onHttpTrigger = (runtime: Runtime<Config>, encryptedPayload: HTTPPayload): any => {
+const onHttpTrigger = (runtime: Runtime<Config>, payload: HTTPPayload): any => {
   runtime.log(`HTTP trigger received`)
 
-  const decryptedPayload = decrypt(encryptedPayload);
- 
-  const {proof,commitment} = decryptedPayload
+  const userData = decodeJson(payload.input) as userDataSchema
+
+  runtime.log(`User data: ${userData}`)
+
+  const {proof, commitment} = userData;
 
   const httpClient = new cre.capabilities.HTTPClient()
 
@@ -19,20 +21,20 @@ const onHttpTrigger = (runtime: Runtime<Config>, encryptedPayload: HTTPPayload):
         )(runtime.config)
         .result();
 
-  const txHash = createID(runtime,commitment)
+  //const txHash = createID(runtime,commitment)
 
-  return "processed"
+  return result;
 }
 
 const verifyProof = (proof:any) => (sendRequester:HTTPSendRequester,config:Config):any =>{
 
-	const dataToSend = { ...proof, action: "test"}
+	const dataToSend = { ...proof, action: "anonymous-identity"}
 
 	const bodyBytes = new TextEncoder().encode(JSON.stringify(dataToSend));
     const body = Buffer.from(bodyBytes).toString("base64");
 
 	const Req = {
-        url: `https://developer.world.org/api/v2/verify/app_staging_129259332fd6f93d4fabaadcc5e4ff9d`,
+        url: `https://developer.world.org/api/v2/verify/app_812b3faf89ee1a672e8913c69ce528c0`,
         method: "POST" as const,
         body,
         headers: {
@@ -50,14 +52,6 @@ const verifyProof = (proof:any) => (sendRequester:HTTPSendRequester,config:Confi
         Response: bodyText
       };
   };
-
-const decrypt =(encryptedPayload:HTTPPayload)=>{
-
-	return {
-		proof:"",
-    commitment:""
-  	}
-}
 
 const initWorkflow = (config: Config) => {
   const httpTrigger = new HTTPCapability();

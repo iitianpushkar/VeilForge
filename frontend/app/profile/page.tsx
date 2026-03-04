@@ -46,20 +46,21 @@ export default function ProfilePage() {
   async function handleVerify(proof: ISuccessResult) {
     if (!commitment) throw new Error("Commitment missing");
 
+    const userData = {
+      proof:proof,
+      commitment:commitment
+    }
+
     const res = await fetch("http://localhost:8000/verify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        proof,
-        commitment,
-      }),
+      body: JSON.stringify(userData),
     });
 
     if (!res.ok) {
       throw new Error("WorldID verification failed");
     }
 
-    // persist zkID
     localStorage.setItem(
       "zkID",
       JSON.stringify({
@@ -70,6 +71,7 @@ export default function ProfilePage() {
     );
 
     const data = await res.json();
+    console.log("response", data);
     const tx = data.txHash;
     
     setTxHash(tx);

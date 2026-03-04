@@ -1,7 +1,7 @@
 import {WebSocketProvider, Wallet, Contract} from "ethers";
 import dotenv from "dotenv";
-import {pool_abi} from "./balanceTree/abi.ts";
-import { idmixer_abi } from "./identityTree/abi.ts";
+import {pool_abi} from "./Pool/abi.ts";
+import { idmixer_abi } from "./Id/abi.ts";
 
 dotenv.config();
 

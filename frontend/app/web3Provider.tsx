@@ -6,7 +6,7 @@ import {
   RainbowKitProvider,
   getDefaultConfig,
 } from '@rainbow-me/rainbowkit';
-import { arcTestnet } from 'wagmi/chains';
+import { arcTestnet, base } from 'wagmi/chains';
 import { http } from 'wagmi';
 import { useMemo, useState } from 'react';
 import '@rainbow-me/rainbowkit/styles.css';
@@ -23,9 +23,9 @@ export default function Web3Provider({
       getDefaultConfig({
         appName: 'my-project',
         projectId: 'new',
-        chains: [arcTestnet],
+        chains: [base],
         transports: {
-          [arcTestnet.id]: http(),
+          [base.id]: http(),
         },
         ssr: false,
       }),

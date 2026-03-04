@@ -14,7 +14,7 @@ contract Settlement {
         usdc = IERC20(_usdc);
     }
 
-    function settleTrade(bytes memory route, uint256 amount) public payable {
+    function settleTrade(bytes memory route, uint256 amount) internal {
         (address target, uint256 value, bytes memory data) =
             abi.decode(route, (address, uint256, bytes));
 

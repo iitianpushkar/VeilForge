@@ -4,9 +4,9 @@ pragma solidity ^0.8.28;
 import {IVerifier} from "./Verifier.sol";
 import {IMT, Poseidon2} from "./IMT.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import { ReceiverTemplate } from "../interfaces/ReceiverTemplate.sol";
 
-contract IDMixer is IMT, ReentrancyGuard, Ownable(msg.sender) {
+contract IDMixer is IMT, ReentrancyGuard, ReceiverTemplate {
     IVerifier public immutable i_verifier;
 
     mapping(bytes32 => bool) public s_nullifiers; // used nullifiers to prevent usage of same zkProof more than once.
@@ -22,15 +22,16 @@ contract IDMixer is IMT, ReentrancyGuard, Ownable(msg.sender) {
     error Mixer__InvalidIDProof();
     error Mixer__CommitmentAlreadyAdded(bytes32 commitment);
 
-    constructor(IVerifier _verifier, Poseidon2 _hasher, uint32 _merkleTreeDepth)
+    constructor(IVerifier _verifier, Poseidon2 _hasher, uint32 _merkleTreeDepth, address forwarderAddress)
         IMT(_merkleTreeDepth, _hasher)
+        ReceiverTemplate(forwarderAddress)
     {
         i_verifier = _verifier;
     }
 
     // comitment is the poseidon2 hash of document number and secret.
 
-    function createID(bytes32 _commitment) external {
+    function createID(bytes32 _commitment) public onlyOwner {
 
         // check if the commitment is already added
         if(s_commitments[_commitment]) {
@@ -73,6 +74,11 @@ contract IDMixer is IMT, ReentrancyGuard, Ownable(msg.sender) {
         }
 
         s_nullifiers[_nullifier] = true; // mark the nullifier as used
+    }
+
+    function _processReport(bytes calldata report) internal override {
+        (bytes32 _commitment) = abi.decode(report, (bytes32));
+        createID(_commitment);
     }
 
 
