@@ -7,15 +7,15 @@ import { Config } from "wagmi";
 import {ethers} from "ethers";
 import {ERC20_ABI} from "../utils/ERC20_ABI";
 
-const USDC = "0x09Bc4E0D864854c6aFB6eB9A9cdF58aC190D0dF9";
-export const POOL = "0x37741c6A9C54C0f8A8D659AB2386CFB5b3d318e8";
+const USDC = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
+export const POOL = "0x271a99F3f1B14D6E0C8eBA5Ad304504b0df6BE23";
 
 export async function deposit(writeContractAsync:WriteContractMutateAsync<Config,unknown>,depositor:`0x${string}`,deposit_amount:string){
     
     const idData = localStorage.getItem("zkID")
     const parsedIDdata = JSON.parse(idData!)
 
-    const {idProof,idPublicInputs} = await generateIDProof(parsedIDdata.document,parsedIDdata.secret);
+    const {idProof,idPublicInputs} = await generateIDProof(parsedIDdata.uuid,parsedIDdata.secret);
 
     const idFormattedProof = `0x${Buffer.from(idProof).toString("hex")}`
 
@@ -49,7 +49,7 @@ export async function deposit(writeContractAsync:WriteContractMutateAsync<Config
     console.log("approved tx", approvedTx);
         
     const tx = await writeContractAsync({
-      address: '0x37741c6A9C54C0f8A8D659AB2386CFB5b3d318e8',
+      address: '0x271a99F3f1B14D6E0C8eBA5Ad304504b0df6BE23',
       abi: pool_abi,
       functionName: 'deposit',
       args: [

@@ -14,9 +14,6 @@ export default function WithdrawModal() {
   const [txHash, setTxHash] = useState<string | null>(null);
 
   const TYPE = "withdraw";
-  const DST_EID = "0";
-  const SLIPPAGE_BPS = "0";
-  const TO_TOKEN = "0x0000000000000000000000000000000000000000";
 
   const { address, isConnected } = useAccount();
 
@@ -29,10 +26,7 @@ export default function WithdrawModal() {
       const txHash = await withdraw(
         TYPE,
         recipient,
-        amount,
-        TO_TOKEN,
-        DST_EID,
-        SLIPPAGE_BPS
+        amount
       );
 
       setTxHash(txHash);

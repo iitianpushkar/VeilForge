@@ -54,7 +54,7 @@ export default function WalletsPage() {
       const parsedIDdata = JSON.parse(idData!);
 
       const { idProof, idPublicInputs } = await generateIDProof(
-        parsedIDdata.document,
+        parsedIDdata.uuid,
         parsedIDdata.secret
       );
 
@@ -81,7 +81,7 @@ export default function WalletsPage() {
       setStep("tx");
 
       const tx = await writeContractAsync({
-        address: "0x37741c6A9C54C0f8A8D659AB2386CFB5b3d318e8",
+        address: "0x271a99F3f1B14D6E0C8eBA5Ad304504b0df6BE23",
         abi: pool_abi,
         functionName: "createWallet",
         args: [

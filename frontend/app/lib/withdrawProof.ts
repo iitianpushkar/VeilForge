@@ -4,7 +4,7 @@ import { Noir } from "@noir-lang/noir_js";
 import axios from "axios";
 
 
-export async function generateWithdrawProof(toToken:string,dstEid:string,slippageBps:string,nullifier:string, secret:string, balance:string, recipient:string, withdraw_amount : string) {
+export async function generateWithdrawProof(nullifier:string, secret:string, balance:string, recipient:string, withdraw_amount : string) {
 
   const res = await fetch("/api/withdrawProof");
   const { circuit } = await res.json();
@@ -40,9 +40,6 @@ export async function generateWithdrawProof(toToken:string,dstEid:string,slippag
     const honk = new UltraHonkBackend(circuit.bytecode, { threads: 1 });
     const input = {
       // Public inputs
-      toToken:toToken,
-      dstEid:dstEid,
-      slippageBps:slippageBps,
       root: merkleProof.root,
       nullifier_hash: nullifierHash.toString(),
       recipient: recipient.toString(),
@@ -69,7 +66,7 @@ export async function generateWithdrawProof(toToken:string,dstEid:string,slippag
     // Restore original console.log
     console.log = originalLog;
 
-    const new_commitment = publicInputs[8];
+    const new_commitment = publicInputs[5];
 
     console.log("New commitment:", new_commitment.toString());
 

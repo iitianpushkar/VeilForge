@@ -45,7 +45,7 @@ async function startServer() {
 
     res.json({txHash:tx.hash})
   });
-/*
+
   app.post("/withdraw", async (req: Request, res: Response) => {
     try {
       console.log("Received withdraw request");
@@ -67,7 +67,9 @@ async function startServer() {
         return res.status(400).json({ error: "Invalid recipient address" });
       }
 
-      const tx = await pool.withdraw(
+      console.log("executing tx");
+
+      const tx = await pool.withdraw!(
         { idProof, idRoot, idNullifier },
         {
             _proof: balanceFormattedProof,
@@ -93,8 +95,6 @@ async function startServer() {
       });
     }
   });
-
-  */
 
 
   /* ------------------------- SERVER ------------------------- */

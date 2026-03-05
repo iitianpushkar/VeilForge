@@ -13,13 +13,9 @@ export async function generateIDProof(document:string, secret:string) {
   // Initialize Barretenberg
   const bb = await Barretenberg.new();
 
-  const passportHash = sha256(
-    new TextEncoder().encode(document)
-  );
-
   // 2️⃣ Reduce hash → field element
   const _document = Fr.fromBufferReduce(
-    Buffer.from(passportHash)
+    Buffer.from(document)
   );
   const _secret = new Fr(ethers.getBytes(secret));
 

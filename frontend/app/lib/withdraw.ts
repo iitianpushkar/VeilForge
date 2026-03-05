@@ -5,12 +5,12 @@ import { ethers } from "ethers";
 import { updateWallet } from "../lib/walletStore";
 import axios from "axios";
 
-export async function withdraw(type:string,recipient:string,withdraw_amount:string,toToken:string,dstEid:string,slippageBps:string) {
+export async function withdraw(type:string,recipient:string,withdraw_amount:string) {
     
     const idData = localStorage.getItem("zkID")
     const parsedIDdata = JSON.parse(idData!)
 
-    const {idProof,idPublicInputs} = await generateIDProof(parsedIDdata.document,parsedIDdata.secret);
+    const {idProof,idPublicInputs} = await generateIDProof(parsedIDdata.uuid,parsedIDdata.secret);
 
     const idFormattedProof = `0x${Buffer.from(idProof).toString("hex")}`
 
@@ -26,7 +26,7 @@ export async function withdraw(type:string,recipient:string,withdraw_amount:stri
     const secret = walletData.secret;
     const balance = walletData.balance;
 
-    const {proof, publicInputs, new_nullifier, new_secret, new_balance} = await generateWithdrawProof(toToken,dstEid,slippageBps,nullifier,secret,balance,recipient,withdraw_amount);
+    const {proof, publicInputs, new_nullifier, new_secret, new_balance} = await generateWithdrawProof(nullifier,secret,balance,recipient,withdraw_amount);
 
     const balanceFormattedProof = `0x${Buffer.from(proof).toString("hex")}`
 
@@ -36,19 +36,16 @@ export async function withdraw(type:string,recipient:string,withdraw_amount:stri
     
     try {
     const response = await axios.post(`http://localhost:8000/${type}`,{
-        toToken:toToken,
-        dstEid:dstEid,
-        slippageBps:slippageBps,
         idProof: idFormattedProof,
         idRoot: idPublicInputs[0],
         idNullifier: idPublicInputs[1],
         balanceFormattedProof:balanceFormattedProof,
-        root: publicInputs[3],
-        nullifierHash: publicInputs[4],
+        root: publicInputs[0],
+        nullifierHash: publicInputs[1],
         recipient: recipient,
         scaledAmount: ethers.parseUnits(withdraw_amount,6).toString(),
-        newNullifierHash: publicInputs[7],
-        newCommitment: publicInputs[8],
+        newNullifierHash: publicInputs[4],
+        newCommitment: publicInputs[5],
     })
 
     const tx = response.data;
