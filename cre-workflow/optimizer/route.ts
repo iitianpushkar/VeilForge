@@ -3,34 +3,16 @@ import { type Runtime, getNetwork, bytesToHex, cre, hexToBase64 } from "@chainli
 import { encodeAbiParameters, parseAbiParameters } from "viem";
 import { Interface as EthersInterface, AbiCoder, Interface } from "ethers";
 
-export function settleTrade(
+export function route(
   runtime: Runtime<Config>,
   routerAddress: string,
   interfaceString: string,
-  parameters: any[],
-  idProof: string,
-  WithdrawProof: string
+  parameters: any[]
 ) {
 
-  const evmCfg = runtime.config.evms[0];
-
-  const network = getNetwork({
-    chainFamily: "evm",
-    chainSelectorName: evmCfg.chainSelectorName,
-    isTestnet: false,
-  });
-
-  if (!network) {
-    throw new Error(`Unknown chain name: ${evmCfg.chainSelectorName}`);
-  }
-
-  runtime.log(`Preparing trade execution via executor: ${evmCfg.executorAddress}`);
   runtime.log(`Router: ${routerAddress}`);
   runtime.log(`Interface: ${interfaceString}`);
   runtime.log(`parameters: ${parameters}`)
-
-  const evmClient = new cre.capabilities.EVMClient(network.chainSelector.selector);
-
 
   const iface = new EthersInterface([interfaceString]);
   const functionName = iface.getFunctionName(interfaceString)
@@ -54,43 +36,7 @@ export function settleTrade(
 
   runtime.log(`Encoded route: ${route}`);
 
-  const reportData = makeReportData(idProof,WithdrawProof,route)
-
-  runtime.log(`report data: ${reportData}`);
-
-    const reportResponse = runtime
-    .report({
-      encodedPayload: hexToBase64(reportData),
-      encoderName: "evm",
-      signingAlgo: "ecdsa",
-      hashingAlgo: "keccak256",
-    })
-    .result();
-   
-    runtime.log(`report response got`);
-
-
-  const writeResult = evmClient
-    .writeReport(runtime,{
-      receiver: evmCfg.executorAddress,
-      report: reportResponse,
-      gasConfig: {
-        gasLimit: evmCfg.gasLimit,
-      },
-    })
-    .result();
-
-   // runtime.log(`write result: ${writeResult?.txHash}`);
-  if(writeResult.txHash){
-    const txHash = bytesToHex(writeResult.txHash);
-
-    runtime.log(`Trade execution tx sent: ${txHash}`);
-
-    return txHash;
-  }
-  else{
-    runtime.log(`Tx error: ${writeResult.errorMessage}`)
-  }
+  return route;
 }
 
 export function parseLLmResponse(runtime:Runtime<Config>,llmResponse: llmResponse): {
@@ -117,8 +63,15 @@ export function parseLLmResponse(runtime:Runtime<Config>,llmResponse: llmRespons
   }
 }
 
-const makeReportData = (idProof: string, withdrawProof: string, route: string) =>
-    encodeAbiParameters(parseAbiParameters("IDProof memory id, WithdrawProof memory w, bytes memory route"), [
-      idProof, withdrawProof , route as `0x${string}`
-    ]);
+const makeReportData = (
+  idProof: any,
+  withdrawProof: any,
+  route: string
+) =>
+  encodeAbiParameters(
+    parseAbiParameters(
+      "(bytes,bytes32,bytes32),(bytes,bytes32,bytes32,address,uint256,bytes32,bytes32),bytes"
+    ),
+    [idProof, withdrawProof, route as `0x${string}`]
+  );
 

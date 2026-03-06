@@ -1,7 +1,7 @@
 import { HTTPCapability, handler, type Runtime, type HTTPPayload, Runner, HTTPSendRequester, ok, cre, consensusIdenticalAggregation, decodeJson} from "@chainlink/cre-sdk"
 import {Config, req} from "./types"
 import {askLLM} from "./llm"
-import { settleTrade, parseLLmResponse } from "./executor"
+import { route, parseLLmResponse } from "./route"
 
 const onHttpTrigger = (runtime: Runtime<Config>, payload: HTTPPayload): any => {
   runtime.log(`HTTP trigger received`)
@@ -27,10 +27,10 @@ const onHttpTrigger = (runtime: Runtime<Config>, payload: HTTPPayload): any => {
   const result = askLLM(runtime, reqData, poolDetails[0].dex);
 
   const parsedResponse = parseLLmResponse(runtime,result);
+  
+  const encodedRoute = route(runtime,parsedResponse.routerAddress,parsedResponse.Interface,parsedResponse.parameters);
 
-  settleTrade(runtime,parsedResponse.routerAddress,parsedResponse.Interface,parsedResponse.parameters,reqData.idProof, reqData.withdrawProof);
-
-  return "processed"
+  return encodedRoute;
 }
 
 

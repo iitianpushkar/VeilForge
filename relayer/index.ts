@@ -2,7 +2,7 @@ import express, { type Request, type Response } from "express";
 import { ethers, isAddress } from "ethers";
 import cors from "cors";
 import dotenv from "dotenv";
-import { IdWorkflow } from "./childProcess";
+import { IdWorkflow, optimizerWorkflow } from "./childProcess";
 import { pool, idmixer } from "./contract";
 
 dotenv.config();
@@ -87,6 +87,81 @@ async function startServer() {
       console.log(`Withdraw tx: ${tx.hash}`);
 
       res.json(tx.hash);
+    } catch (err: any) {
+      console.error("Withdraw failed:", err);
+      res.status(500).json({
+        error: "Withdraw failed",
+        reason: err?.reason || err?.message
+      });
+    }
+  });
+
+  app.post("/swap", async (req: Request, res: Response) => {
+    try {
+      console.log("Received swap request");
+
+      const {
+        swapPayload,
+        idProof,
+        idRoot,
+        idNullifier,
+        balanceFormattedProof,
+        root,
+        nullifierHash,
+        recipient,
+        scaledAmount,
+        newNullifierHash,
+        newCommitment
+      } = req.body;
+
+      console.log("swapPayload", swapPayload);
+
+      if (!isAddress(recipient)) {
+        return res.status(400).json({ error: "Invalid recipient address" });
+      }
+
+      const payload = {
+        network:swapPayload.network,
+        fromToken: {
+          symbol:swapPayload.fromToken.symbol,
+          address:swapPayload.fromToken.address,
+          decimals:swapPayload.fromToken.decimals
+        },
+        toToken: {
+          symbol:swapPayload.toToken.symbol,
+          address:swapPayload.toToken.address,
+          decimals:swapPayload.toToken.decimals
+        },
+        amountIn: swapPayload.amountIn,
+        minAmountOut:swapPayload.minAmountOut,
+        recipient:swapPayload.recipient,
+      }
+
+      const route = await optimizerWorkflow(payload);
+
+      console.log("route from cre", route);
+
+      const tx = await pool.swap!(
+        { idProof, idRoot, idNullifier },
+        {
+            _proof: balanceFormattedProof,
+            _root: root,
+            _nullifierHash: nullifierHash,
+            _recipient: recipient,
+            _amount: scaledAmount,
+            _newNullifierHash: newNullifierHash,
+            _newCommitment: newCommitment
+          
+        },
+          route
+      )
+
+      await tx.wait();
+
+      console.log("swap tx", tx.hash)
+      
+      res.json({txHash:tx.hash});
+
     } catch (err: any) {
       console.error("Withdraw failed:", err);
       res.status(500).json({

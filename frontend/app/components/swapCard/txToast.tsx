@@ -24,12 +24,12 @@ export default function TxToast({ hash, onClose }: Props) {
         <div className="text-sm text-black">
           <div className="font-medium">Transaction successful</div>
           <a
-            href={`https://mantlescan.com/tx/${hash}`}
+            href={`https://basescan.com/tx/${hash}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-black/60 hover:text-black underline"
           >
-            View on MantleScan
+            View on BaseScan
           </a>
         </div>
 

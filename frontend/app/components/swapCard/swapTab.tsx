@@ -7,11 +7,12 @@ import { TOKENS } from "./tokens";
 import { Token } from "@/app/types/tokens";
 import { pool_abi } from "../../utils/poolAbi";
 import { ethers } from "ethers";
-import { withdraw } from "@/app/lib/withdraw";
+import { swap } from "@/app/lib/swap";
 import TxToast from "./txToast";
 import { useAccount } from "wagmi";
+import { swapPayload } from "@/app/lib/types";
 
-export const POOL = "0x37741c6A9C54C0f8A8D659AB2386CFB5b3d318e8";
+export const POOL = "0x271a99F3f1B14D6E0C8eBA5Ad304504b0df6BE23";
 
 type Props = {
   slippageBps: number;
@@ -83,12 +84,12 @@ export default function SwapTab({ slippageBps }: Props) {
     try {
       setLoading(true);
   
-      const swapPayload = {
+      const swapPayload:swapPayload = {
         network: "base",
         fromToken: {
           symbol: "USDC",
           address: "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
-          decimals: 6,
+          decimals: "6",
         },
         toToken: {
           symbol: toToken.symbol,
@@ -105,10 +106,17 @@ export default function SwapTab({ slippageBps }: Props) {
             return "0";
           }
         })(),
-        recipient: recipient || address,
+        recipient: recipient || address!,
       };
   
       console.log("SWAP JSON:", swapPayload);
+
+      const tx = await swap("swap",swapPayload,amount);
+
+      setTxHash(tx);
+      setAmount("0")
+      setReceiveAmount("0")
+      setRecipient("")
 
     } finally {
       setLoading(false);
