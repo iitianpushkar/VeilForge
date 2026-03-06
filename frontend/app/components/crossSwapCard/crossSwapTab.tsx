@@ -77,10 +77,7 @@ export default function CrossSwapTab({ slippageBps }: Props) {
       const txHash = await withdraw(
         "crossSwap",
         recipient,
-        amount,
-        toToken.address,
-        toChain.eid,
-        slippageBps.toString()
+        amount
       );
 
       setTxHash(txHash);
@@ -98,7 +95,7 @@ export default function CrossSwapTab({ slippageBps }: Props) {
       {/* FROM */}
       <TokenBox
         label="From"
-        chain="Mantle"
+        chain="Base"
         token="USDC"
         value={amount}
         onChange={setAmount}

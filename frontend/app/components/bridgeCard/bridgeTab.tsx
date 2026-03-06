@@ -81,10 +81,7 @@ export default function BridgeTab({ slippageBps }: Props) {
       const txHash = await withdraw(
         "bridge",
         recipient,
-        amount,
-        "0x0000000000000000000000000000000000000000", // token unused for bridge
-        toChain.eid,
-        slippageBps.toString()
+        amount
       );
 
       setTxHash(txHash);
@@ -101,7 +98,7 @@ export default function BridgeTab({ slippageBps }: Props) {
       {/* FROM */}
       <TokenBox
         label="From"
-        chain="Mantle"
+        chain="Base"
         token="USDC"
         value={amount}
         onChange={setAmount}

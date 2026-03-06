@@ -29,7 +29,7 @@ export default function TxToast({ hash, onClose }: Props) {
             rel="noopener noreferrer"
             className="text-xs text-black/60 hover:text-black underline"
           >
-            View on MantleScan
+            View on BaseScan
           </a>
         </div>
 

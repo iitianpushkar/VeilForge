@@ -67,12 +67,17 @@ export default function WithdrawModal() {
             <div className="rounded-2xl border border-black/5 bg-white/70 backdrop-blur px-4 py-3">
               <div className="flex justify-between text-xs text-black/40">
                 <span>To</span>
-                <span>Mantle</span>
+                <span>Base</span>
               </div>
 
               <div className="mt-2 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-black/5" />
+                  <img
+                    src="/usdc.png"
+                    alt="USDC"
+                    className="h-8 w-8 rounded-full"
+                  />
+
                   <span className="font-medium text-black">USDC</span>
                 </div>
 

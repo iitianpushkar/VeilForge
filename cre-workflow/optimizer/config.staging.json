@@ -1,5 +1,4 @@
 {
-  "schedule": "*/30 * * * * *",
   "Model": "anthropic/claude-opus-4.6",
   "url": "https://api.coingecko.com/api/v3/onchain",
   "authorizedEVMAddress": "",

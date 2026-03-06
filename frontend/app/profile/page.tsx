@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../components/navbar";
 import { v4 as uuidv4 } from "uuid";
 import { Barretenberg, Fr } from "@aztec/bb.js";
@@ -23,7 +23,26 @@ export default function ProfilePage() {
 
   const app_id = process.env.NEXT_PUBLIC_APP_ID as `app_${string}`;
 
-  // ================= STEP 1 =================
+  // ================= LOAD IDENTITY FROM LOCAL STORAGE =================
+  useEffect(() => {
+    const saved = localStorage.getItem("zkID");
+
+    if (!saved) return;
+
+    try {
+      const data = JSON.parse(saved);
+
+      setUuid(data.uuid);
+      setSecret(data.secret);
+      setCommitment(data.commitment);
+
+      setStep("success");
+    } catch (err) {
+      console.error("Failed to load zkID", err);
+    }
+  }, []);
+
+  // ================= STEP 1: GENERATE IDENTITY =================
   async function generateIdentity() {
     const bb = await Barretenberg.new();
 
@@ -42,14 +61,14 @@ export default function ProfilePage() {
     setStep("generated");
   }
 
-  // ================= STEP 2 =================
+  // ================= STEP 2: WORLD ID VERIFY =================
   async function handleVerify(proof: ISuccessResult) {
     if (!commitment) throw new Error("Commitment missing");
 
     const userData = {
-      proof:proof,
-      commitment:commitment
-    }
+      proof: proof,
+      commitment: commitment,
+    };
 
     const res = await fetch("http://localhost:8000/verify", {
       method: "POST",
@@ -61,26 +80,26 @@ export default function ProfilePage() {
       throw new Error("WorldID verification failed");
     }
 
+    // Save identity locally
     localStorage.setItem(
       "zkID",
       JSON.stringify({
         uuid,
         secret,
-        commitment
+        commitment,
       })
     );
 
     const data = await res.json();
-    console.log("response", data);
     const tx = data.txHash;
-    
+
     setTxHash(tx);
     setStep("success");
   }
 
   const onSuccess = () => {
-     console.log("profile created")
-  }
+    console.log("profile created");
+  };
 
   return (
     <>
@@ -93,8 +112,8 @@ export default function ProfilePage() {
             Create Private zk-ID
           </h2>
 
-          {/* STEP 1 */}
-          {step === "idle" && (
+          {/* GENERATE BUTTON */}
+          {step === "idle" && !uuid && (
             <button
               onClick={generateIdentity}
               className="w-full rounded-full py-3 bg-black text-white text-sm font-medium hover:bg-black/90 transition"
@@ -103,16 +122,16 @@ export default function ProfilePage() {
             </button>
           )}
 
-          {/* SHOW GENERATED DATA */}
-          {step !== "idle" && (
+          {/* SHOW IDENTITY DATA */}
+          {uuid && secret && commitment && (
             <div className="mt-4 space-y-2 text-xs break-all">
-              <Field label="UUID" value={uuid!} />
-              <Field label="Secret" value={secret!} />
-              <Field label="Commitment" value={commitment!} />
+              <Field label="UUID" value={uuid} />
+              <Field label="Secret" value={secret} />
+              <Field label="Commitment" value={commitment} />
             </div>
           )}
 
-          {/* STEP 2 */}
+          {/* VERIFY BUTTON */}
           {step === "generated" && (
             <div className="mt-6">
               <IDKitWidget
@@ -143,11 +162,14 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      {/* TX TOAST */}
       {txHash && (
-        <TxToast
-          hash={txHash}
-          onClose={() => setTxHash(null)}
-        />
+        <div className="fixed bottom-6 right-6 z-50">
+          <TxToast
+            hash={txHash}
+            onClose={() => setTxHash(null)}
+          />
+        </div>
       )}
     </>
   );

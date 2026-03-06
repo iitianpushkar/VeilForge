@@ -1,6 +1,5 @@
 import { HTTPCapability, handler, type Runtime, type HTTPPayload, Runner, HTTPSendRequester, ok, cre, consensusIdenticalAggregation, decodeJson} from "@chainlink/cre-sdk"
 import {Config, userDataSchema} from "./types";
-import {createID} from "./evm";
 
 const onHttpTrigger = (runtime: Runtime<Config>, payload: HTTPPayload): any => {
   runtime.log(`HTTP trigger received`)

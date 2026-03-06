@@ -20,8 +20,8 @@ type Props = {
 
 export default function SwapTab({ slippageBps }: Props) {
 
-  const {address} = useAccount();
-  
+  const { address } = useAccount();
+
 
   const [toToken, setToToken] = useState<Token>(TOKENS[0]);
   const [amount, setAmount] = useState("");
@@ -32,7 +32,7 @@ export default function SwapTab({ slippageBps }: Props) {
 
   async function fetchSwapQuote() {
     if (!amount || Number(amount) <= 0 || !toToken) return;
-  
+
     try {
       const res = await fetch("https://trade-api.uniswap.org/v1/quote", {
         method: "POST",
@@ -47,19 +47,19 @@ export default function SwapTab({ slippageBps }: Props) {
           tokenOut: toToken.address,
           amount: ethers.parseUnits(amount, 6).toString(),
           type: 'EXACT_INPUT',
-          swapper:recipient || address,
-          slippageTolerance: slippageBps/100,
+          swapper: recipient || address,
+          slippageTolerance: slippageBps / 100,
         }),
       });
-  
+
       const data = await res.json();
       console.log("quote", data)
-  
+
       if (!data?.quote?.output.amount) {
         setReceiveAmount("—");
         return;
       }
-  
+
       setReceiveAmount(
         ethers.formatUnits(
           data.quote.output.amount,
@@ -80,11 +80,11 @@ export default function SwapTab({ slippageBps }: Props) {
 
   async function handleSwap() {
     if (!amount || !recipient) return;
-  
+
     try {
       setLoading(true);
-  
-      const swapPayload:swapPayload = {
+
+      const swapPayload: swapPayload = {
         network: "base",
         fromToken: {
           symbol: "USDC",
@@ -108,10 +108,10 @@ export default function SwapTab({ slippageBps }: Props) {
         })(),
         recipient: recipient || address!,
       };
-  
+
       console.log("SWAP JSON:", swapPayload);
 
-      const tx = await swap("swap",swapPayload,amount);
+      const tx = await swap("swap", swapPayload, amount);
 
       setTxHash(tx);
       setAmount("0")
@@ -180,10 +180,12 @@ export default function SwapTab({ slippageBps }: Props) {
 
       {/* TX Toast */}
       {txHash && (
-        <TxToast
-          hash={txHash}
-          onClose={() => setTxHash(null)}
-        />
+        <div className="fixed bottom-6 right-6 z-50">
+          <TxToast
+            hash={txHash}
+            onClose={() => setTxHash(null)}
+          />
+        </div>
       )}
     </div>
   );

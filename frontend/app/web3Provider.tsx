@@ -6,7 +6,7 @@ import {
   RainbowKitProvider,
   getDefaultConfig,
 } from '@rainbow-me/rainbowkit';
-import { arcTestnet, base } from 'wagmi/chains';
+import { base } from 'wagmi/chains';
 import { http } from 'wagmi';
 import { useMemo, useState } from 'react';
 import '@rainbow-me/rainbowkit/styles.css';
