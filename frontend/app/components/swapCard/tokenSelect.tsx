@@ -9,7 +9,7 @@ function getTokenLogo(symbol: string): string | null {
   if (upper === "ETH") return "/eth.png";
   if (upper === "WETH") return "/weth.png";
   if (upper === "USDC") return "/usdc.png";
-  if(upper === "USDT") return "/usdt.png"
+  if(upper === "USDT") return "/jj.png"
   return null;
 }
 

@@ -98,7 +98,7 @@ import {
       // API key for the outbound LLM request (stored in CRE secrets)
       const openrouterApiKey = runtime.getSecret({ id: "OPENROUTER_API_KEY" }).result();
 
-      runtime.log(`prompt: ${userPrompt+JSON.stringify(params)+dex}`);
+    //  runtime.log(`prompt: ${userPrompt+JSON.stringify(params)+dex}`);
   
         // Fan out the HTTP request through CRE; aggregate identical responses
       const httpClient = new cre.capabilities.HTTPClient();

@@ -14300,7 +14300,6 @@ var userPrompt = `
   `;
 var askLLM = (runtime2, params, dex) => {
   const openrouterApiKey = runtime2.getSecret({ id: "OPENROUTER_API_KEY" }).result();
-  runtime2.log(`prompt: ${userPrompt + JSON.stringify(params) + dex}`);
   const httpClient = new cre.capabilities.HTTPClient;
   const result = httpClient.sendRequest(runtime2, PostGeminiData(params, dex, openrouterApiKey.value), consensusIdenticalAggregation())(runtime2.config).result();
   runtime2.log(`llm response: ${result.Response}`);
@@ -18281,11 +18280,14 @@ var onHttpTrigger = (runtime2, payload) => {
   const httpClient = new cre.capabilities.HTTPClient;
   const response = httpClient.sendRequest(runtime2, discoverPools(runtime2, secret, reqData), consensusIdenticalAggregation())(runtime2.config).result();
   const poolDetails = response?.data ?? [];
-  runtime2.log(`dex: ${poolDetails[0].dex}`);
+  runtime2.log(`Winning dex: ${poolDetails[0].dex}`);
   const result = askLLM(runtime2, reqData, poolDetails[0].dex);
   const parsedResponse = parseLLmResponse(runtime2, result);
   const encodedRoute = route(runtime2, parsedResponse.routerAddress, parsedResponse.Interface, parsedResponse.parameters);
-  return encodedRoute;
+  return {
+    encodedRoute,
+    winningDex: poolDetails[0].dex
+  };
 };
 var discoverPools = (runtime2, secret, payload) => (sendRequester, config) => {
   const url = `${config.url}/networks/${payload.network}/tokens/${payload.fromToken.address}/pools`;

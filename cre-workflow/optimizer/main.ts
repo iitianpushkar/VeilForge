@@ -22,7 +22,7 @@ const onHttpTrigger = (runtime: Runtime<Config>, payload: HTTPPayload): any => {
 
   const poolDetails = response?.data ?? []
 
-  runtime.log(`dex: ${poolDetails[0].dex}`)
+  runtime.log(`Winning dex: ${poolDetails[0].dex}`)
 
   const result = askLLM(runtime, reqData, poolDetails[0].dex);
 
@@ -30,7 +30,10 @@ const onHttpTrigger = (runtime: Runtime<Config>, payload: HTTPPayload): any => {
   
   const encodedRoute = route(runtime,parsedResponse.routerAddress,parsedResponse.Interface,parsedResponse.parameters);
 
-  return encodedRoute;
+  return {
+	encodedRoute:encodedRoute,
+	winningDex: poolDetails[0].dex
+  };
 }
 
 

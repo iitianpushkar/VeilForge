@@ -5,6 +5,7 @@ import { ethers } from "ethers";
 import { updateWallet } from "../lib/walletStore";
 import axios from "axios";
 import { swapPayload } from "./types";
+import { saveTx } from "./txStorage";
 
 export async function swap(type:string,swapPayload:swapPayload, withdraw_amount:string) {
     
@@ -50,7 +51,10 @@ export async function swap(type:string,swapPayload:swapPayload, withdraw_amount:
         newCommitment: publicInputs[5],
     })
 
-    const tx = response.data.txHash;
+    const data = response.data;
+
+    const tx = data.txHash;
+    const dex = data.dex;
 
     console.log("swapped",tx);
 
@@ -61,6 +65,16 @@ export async function swap(type:string,swapPayload:swapPayload, withdraw_amount:
     if (!receipt || receipt.status !== 1) {
       throw new Error("Withdraw transaction failed");
     }
+
+    saveTx({
+      txHash:tx,
+      type: "swap",
+      fromToken: swapPayload.fromToken.symbol,
+      toToken: swapPayload.toToken.symbol,
+      amount:withdraw_amount,
+      dex:dex,
+      timestamp: Date.now()
+    })
           
   } catch (error) {
     console.log("error in withdrawing", error); 

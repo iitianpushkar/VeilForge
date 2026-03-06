@@ -137,9 +137,9 @@ async function startServer() {
         recipient:swapPayload.recipient,
       }
 
-      const route = await optimizerWorkflow(payload);
+      const result = await optimizerWorkflow(payload);
 
-      console.log("route from cre", route);
+      console.log("route from cre", result.encodedRoute);
 
       const tx = await pool.swap!(
         { idProof, idRoot, idNullifier },
@@ -153,14 +153,17 @@ async function startServer() {
             _newCommitment: newCommitment
           
         },
-          route
+          result.encodedRoute
       )
 
       await tx.wait();
 
       console.log("swap tx", tx.hash)
       
-      res.json({txHash:tx.hash});
+      res.json({
+        txHash:tx.hash,
+        dex: result.winningDex
+      });
 
     } catch (err: any) {
       console.error("Withdraw failed:", err);

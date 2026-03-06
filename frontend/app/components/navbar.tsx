@@ -11,7 +11,7 @@ const NAV_ITEMS = [
   { label: 'Deposit', href: '/deposit' },
   { label: 'Swap', href: '/swap' },
   { label: 'Withdraw', href: '/withdraw' },
-  { label: 'Profile', href: '/profile' },
+  { label: 'Txns', href: '/txs' },
 ];
 
 export default function Navbar() {

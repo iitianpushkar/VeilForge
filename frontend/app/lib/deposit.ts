@@ -6,6 +6,7 @@ import { generateDepositProof } from "../lib/depositProof";
 import { Config } from "wagmi";
 import {ethers} from "ethers";
 import {ERC20_ABI} from "../utils/ERC20_ABI";
+import { saveTx } from "./txStorage";
 
 const USDC = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 export const POOL = "0x271a99F3f1B14D6E0C8eBA5Ad304504b0df6BE23";
@@ -71,6 +72,14 @@ export async function deposit(writeContractAsync:WriteContractMutateAsync<Config
     });
 
     console.log("deposited",tx);
+
+    saveTx({
+      txHash:tx,
+      type: "deposit",
+      amount:deposit_amount,
+      token: "USDC",
+      timestamp: Date.now()
+    })
 
     walletData.nullifier = new_nullifier;
     walletData.secret = new_secret;

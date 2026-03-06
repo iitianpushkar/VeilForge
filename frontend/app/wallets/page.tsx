@@ -15,6 +15,7 @@ import { generateIDProof } from "../lib/idProof";
 import { useWriteContract } from "wagmi";
 import TxToast from "./txToast";
 import Navbar from "../components/navbar";
+import { saveTx } from "../lib/txStorage";
 
 type CreateStep =
   | "idle"
@@ -93,6 +94,12 @@ export default function WalletsPage() {
           commitment.toString(),
         ],
       });
+
+      saveTx({
+        txHash:tx,
+        type: "wallet_creation",
+        timestamp: Date.now()
+      })
 
       const updated = [...wallets, newWallet];
       saveWallets(updated);
