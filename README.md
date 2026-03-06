@@ -1,0 +1,397 @@
+# 🌫️ VeilForge
+## Finding the Optimal Swap Path — Privately
+
+> **VeilForge is a privacy-preserving DEX aggregator powered by Zero Knowledge and Chainlink CRE.**
+
+VeilForge discovers the **best swap route across decentralized exchanges** while keeping **user balances, wallet identity, and trading strategy completely private**.
+
+Unlike traditional aggregators that rely on **centralized routing engines or solver networks**, VeilForge computes optimal swap paths **deterministically inside Chainlink CRE workflows**.
+
+This enables **trust-minimized routing with private execution.**
+
+---
+
+# ✨ Key Idea
+
+VeilForge is a **private DEX aggregator**.
+
+It provides:
+
+- 🔐 **Private swaps**
+- 🧠 **Deterministic routing**
+- ⚡ **Best price discovery**
+- 🌍 **Sybil-resistant anonymous identity**
+
+All powered by:
+
+- **Zero Knowledge proofs**
+- **World ID**
+- **Chainlink CRE**
+
+---
+
+# 🧩 The Problem
+
+Current DeFi routing systems suffer from three major problems.
+
+## 1️⃣ No Privacy
+
+Most DEX aggregators expose:
+
+- wallet address
+- balances
+- trading strategies
+- full transaction history
+
+This creates opportunities for:
+
+- MEV attacks
+- copy trading
+- liquidity extraction
+
+---
+
+## 2️⃣ Centralized Routing Engines
+
+Protocols like **Matcha, 0x, and many aggregators** rely on centralized routing services.
+
+Typical architecture:
+User
+↓
+Aggregator API
+↓
+Routing Engine
+↓
+DEX
+
+Problems:
+- opaque routing
+- trust assumptions
+- potential censorship
+
+---
+
+## 3️⃣ Solver-Based Systems
+
+Intent protocols such as **CoW Swap** depend on **solver networks**.
+
+Problems with solver systems:
+
+- complex architecture
+- solver competition latency
+- reliance on external actors
+- unpredictable routing outcomes
+
+---
+
+# ⚡ The VeilForge Solution
+
+VeilForge introduces a new primitive:
+
+## Deterministic Private Routing
+
+Instead of centralized routing engines or solver markets:
+
+1️⃣ Routing is computed inside **Chainlink CRE workflows**  
+2️⃣ The best DEX is discovered using **deterministic logic**  
+3️⃣ Execution happens via **private ZK commitments**
+
+The result:
+
+> A **private DEX aggregator with trust-minimized routing**.
+
+---
+
+# 🧠 Core Architecture
+
+Traditional DEX Aggregator:
+User
+↓
+Centralized Router
+↓
+DEX
+VeilForge Architecture:
+User
+↓
+ZK Proof Generation
+↓
+Relayer
+↓
+Chainlink CRE Workflow
+↓
+Optimal Route Discovery
+↓
+On-chain Settlement
+
+Routing logic is executed **offchain inside CRE but deterministically verified**.
+
+No centralized routing server.
+
+No solver markets.
+
+---
+
+# 🔐 Privacy Layer
+
+VeilForge uses **commitment-based private wallets**.
+
+A wallet is represented as a commitment:
+walletCommitment = Poseidon2(nullifier, secret, balance)
+
+
+| Component | Purpose |
+|-----------|--------|
+| nullifier | prevents double spending |
+| secret | private wallet secret |
+| balance | encrypted balance |
+
+Balances remain **completely private**.
+
+---
+
+# 🌍 Identity Layer
+
+To prevent Sybil attacks while preserving anonymity, VeilForge integrates **World ID**.
+
+Users create an identity commitment:
+identityCommitment = Poseidon2(uuid, secret)
+
+
+After verifying via World ID, the commitment is inserted into an **identity Merkle tree**.
+
+Users later prove membership using **Zero Knowledge proofs**.
+
+This ensures:
+
+- one human = one identity
+- full anonymity
+
+---
+
+# 🌳 Identity Mixer
+
+Verified identities are stored in a **Merkle tree**.
+
+Users generate ZK proofs that show:
+
+> "I am a verified human"
+
+without revealing **which identity they are**.
+
+This allows anonymous participation.
+
+---
+
+# 👛 Private Wallets
+
+A VeilForge wallet exists only as a **cryptographic commitment**.
+walletCommitment = Poseidon2(nullifier,secret,balance)
+
+
+The wallet does not expose:
+
+- address
+- balance
+- identity
+
+All operations update commitments using **Zero Knowledge proofs**.
+
+---
+
+# 💰 Private Liquidity Pool
+
+Users interact with a **shielded liquidity pool**.
+
+Supported actions:
+
+- Deposit
+- Swap
+- Withdraw
+
+Each operation proves validity using ZK circuits.
+
+No balances are revealed on chain.
+
+---
+
+# 🔄 Private Swap Aggregation
+
+When a user wants to swap tokens:
+
+1️⃣ User generates a **ZK proof of balance**
+
+2️⃣ Relayer triggers a **Chainlink CRE workflow**
+
+3️⃣ CRE computes the **best DEX**
+
+4️⃣ Swap route is encoded and executed
+
+The swap executes **without revealing wallet identity or balance**.
+
+---
+
+# 🧠 Deterministic Routing with Chainlink CRE
+
+VeilForge uses **Chainlink CRE workflows** for price discovery and route computation.
+
+The workflow:
+
+1. Fetches liquidity pools from market APIs
+2. Evaluates price, liquidity, and fees
+3. Computes estimated outputs
+4. Selects the best pool
+5. Constructs router calldata
+
+The workflow sorts pools by best output and selects the winning DEX.
+
+Routing logic is implemented inside the CRE workflow itself.
+
+---
+
+# 🧩 Swap Route Construction
+
+After selecting the optimal DEX, the workflow constructs the swap call.
+
+The system determines:
+
+- router contract
+- swap interface
+- parameters
+- ETH value for execution
+
+Example output:
+{
+"routerAddress": "0x...",
+"interface": "function swapExactTokensForTokens(...)",
+"parameters": [...],
+"value": "0",
+"dex": "aerodrome-base"
+}
+
+This output is then encoded into a **route payload**.
+
+---
+
+# ⚙ Settlement Layer
+
+The settlement contract receives:
+(routerAddress, value, calldata)
+
+Execution:
+router.call(calldata)
+
+This enables:
+
+- DEX-agnostic execution
+- flexible routing
+- future protocol compatibility
+
+---
+
+# 🏗 System Architecture
+Frontend
+│
+├── Identity generation
+├── ZK proof generation
+│
+Relayer
+│
+├── CRE workflow trigger
+├── transaction submission
+│
+Chainlink CRE
+│
+├── liquidity discovery
+├── optimal route calculation
+├── router calldata construction
+│
+Settlement Contract
+│
+└── DEX Router execution
+
+---
+
+# 🧰 Tech Stack
+
+| Component | Technology |
+|----------|-----------|
+Frontend | Next.js |
+Smart Contracts | Solidity |
+ZK Circuits | Noir |
+Proof System | Barretenberg |
+Identity | World ID |
+Routing | Chainlink CRE |
+Backend | Node.js |
+Relayer | Express |
+Market Data | CoinGecko |
+
+---
+
+# ⚔️ Competitive Analysis
+
+| Feature | VeilForge | 1inch | 0x | CoW Swap |
+|--------|-----------|------|----|---------|
+Private swaps | ✅ | ❌ | ❌ | Partial |
+Deterministic routing | ✅ | ❌ | ❌ | ❌ |
+Centralized routing engine | ❌ | ✅ | ✅ | ❌ |
+Solver dependency | ❌ | ❌ | ❌ | ✅ |
+AI route construction | ✅ | ❌ | ❌ | ❌ |
+
+VeilForge combines:
+
+- **DEX aggregation**
+- **privacy**
+- **trust-minimized routing**
+
+in a single architecture.
+
+---
+
+# 🚀 Example User Flow
+User opens VeilForge
+↓
+Creates identity commitment
+↓
+Verifies using World ID
+↓
+Creates private wallet
+↓
+Deposits USDC
+↓
+Requests swap
+↓
+CRE computes best DEX
+↓
+Swap executed privately
+↓
+User withdraws tokens
+
+
+---
+
+# 🔮 Future Roadmap
+
+- Private cross-chain swaps
+- MEV-resistant execution
+- intent-based private trading
+- private liquidity aggregation across chains
+
+---
+
+# 🏆 Built For
+
+**Chainlink Convergence Hackathon**
+
+Technologies used:
+
+- Chainlink CRE
+- Zero Knowledge Proofs
+- World ID
+
+---
+
+---
+
+# 🌫️ VeilForge
+
+> *Forge your path through liquidity — unseen.*
