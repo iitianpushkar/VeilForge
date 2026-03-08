@@ -1,4 +1,5 @@
 # 🌫️ VeilForge
+[![Click Here](https://img.shields.io/badge/Demo-Click%20Here-green?style=for-the-badge)](https://vimeo.com/1171557218?share=copy&fl=sv&fe=ci)
 ## Finding the Optimal Swap Route — Privately.
 
 > **VeilForge is a privacy-preserving DEX aggregator powered by Zero Knowledge and Chainlink CRE.**
