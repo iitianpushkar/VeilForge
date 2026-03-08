@@ -56,14 +56,17 @@ This creates opportunities for:
 Protocols like **Matcha, 0x, and many aggregators** rely on centralized routing services.
 
 Typical architecture:
-User
-↓
-Aggregator API
-↓
-Routing Engine
-↓
-DEX
+```mermaid
+flowchart LR
+    U[User]
+    A[Aggregator API]
+    R[Routing Engine]
+    D[DEX]
 
+    U --> A
+    A --> R
+    R --> D
+```
 Problems:
 - opaque routing
 - trust assumptions
@@ -277,26 +280,29 @@ This enables:
 ---
 
 # 🏗 System Architecture
-Frontend
-│
-├── Identity generation
-├── ZK proof generation
-│
-Relayer
-│
-├── CRE workflow trigger
-├── transaction submission
-│
-Chainlink CRE
-│
-├── liquidity discovery
-├── optimal route calculation
-├── router calldata construction
-│
-Settlement Contract
-│
-└── DEX Router execution
+```mermaid
+flowchart LR
 
+U[User]
+
+U --> P[Generate ZK Balance Proof]
+
+P --> R[Relayer]
+
+R --> C[Chainlink CRE Workflow]
+
+C --> D[Liquidity Discovery]
+
+D --> E[Best DEX Selection]
+
+E --> F[Swap Route Construction]
+
+F --> S[Settlement Contract]
+
+S --> X[DEX Router Execution]
+
+X --> O[Private Settlement]
+```
 ---
 
 # 🧰 Tech Stack
@@ -306,7 +312,6 @@ Settlement Contract
 Frontend | Next.js |
 Smart Contracts | Solidity |
 ZK Circuits | Noir |
-Proof System | Barretenberg |
 Identity | World ID |
 Routing | Chainlink CRE |
 Backend | Node.js |
@@ -336,24 +341,29 @@ in a single architecture.
 ---
 
 # 🚀 Example User Flow
-User opens VeilForge
-↓
-Creates identity commitment
-↓
-Verifies using World ID
-↓
-Creates private wallet
-↓
-Deposits USDC
-↓
-Requests swap
-↓
-CRE computes best DEX
-↓
-Swap executed privately
-↓
-User withdraws tokens
+```mermaid
+flowchart LR
 
+A[User opens VeilForge]
+
+A --> B[Create Identity Commitment]
+
+B --> C[Verify with World ID]
+
+C --> D[Create Private Wallet]
+
+D --> E[Deposit USDC into Private Pool]
+
+E --> F[Request Token Swap]
+
+F --> G[Relayer triggers CRE Workflow]
+
+G --> H[CRE computes Best DEX Route]
+
+H --> I[Swap executed privately]
+
+I --> J[User withdraws tokens]
+```
 
 ---
 
