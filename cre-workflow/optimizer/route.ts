@@ -62,16 +62,3 @@ export function parseLLmResponse(runtime:Runtime<Config>,llmResponse: llmRespons
     throw new Error(`Failed to parse llm response: ${error}`);
   }
 }
-
-const makeReportData = (
-  idProof: any,
-  withdrawProof: any,
-  route: string
-) =>
-  encodeAbiParameters(
-    parseAbiParameters(
-      "(bytes,bytes32,bytes32),(bytes,bytes32,bytes32,address,uint256,bytes32,bytes32),bytes"
-    ),
-    [idProof, withdrawProof, route as `0x${string}`]
-  );
-

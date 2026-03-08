@@ -17,7 +17,9 @@ async function startServer() {
 
   app.post("/verify", async (req: Request, res: Response) => {
 
-    console.log(req.body)
+    try {
+
+      console.log(req.body)
     
     const userData = req.body;
 
@@ -44,6 +46,14 @@ async function startServer() {
     console.log("id created", tx.hash)
 
     res.json({txHash:tx.hash})
+      
+    } catch (err:any) {
+      console.error("ID creation failed:", err)
+      res.status(500).json({
+        error: "ID creation failed",
+        reason: err?.reason || err?.message
+      });
+    }
   });
 
   app.post("/withdraw", async (req: Request, res: Response) => {
@@ -140,6 +150,8 @@ async function startServer() {
       const result = await optimizerWorkflow(payload);
 
       console.log("route from cre", result.encodedRoute);
+
+      console.log("executing swap tx using provided data");
 
       const tx = await pool.swap!(
         { idProof, idRoot, idNullifier },

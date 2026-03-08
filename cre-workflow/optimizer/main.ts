@@ -22,7 +22,9 @@ const onHttpTrigger = (runtime: Runtime<Config>, payload: HTTPPayload): any => {
 
   const poolDetails = response?.data ?? []
 
-  runtime.log(`Winning dex: ${poolDetails[0].dex}`)
+  runtime.log(`Winning dex: ${poolDetails[0].dex}`);
+
+  runtime.log("Asking llm to find the winning dex router address and functions")
 
   const result = askLLM(runtime, reqData, poolDetails[0].dex);
 

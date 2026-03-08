@@ -89,8 +89,7 @@ import {
 
   and nothing else other than that. Make no mistakes. Don't give me your reasoning or anything, just the JSON object that i can just parse.
   Also, if there is anything like deadline for swap, use 1800000000. 
-  Right now, whatever is th dex below, you find for aerodrome-base dex. "routerAddress":"0xcF77a3Ba9A5CA399B7c97c74d54e5b1Beb874E43","interface":"function swapExactTokensForTokens(uint256 amountIn, uint256 amountOutMin, (address from, address to, bool stable, address factory)[] routes, address to, uint256 deadline) external","parameters":["10000","4748629806998",[["0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913","0x4200000000000000000000000000000000000006",false,"0x420DD381b31aEf6683db6B902084cB0FFECe40Da"]],"0xe0769E841753B9F53462E7ae8B9b36AC6D9603b9","1800000000"],"value":"0","dex":"aerodrome-base"
-
+  
   Swap request:
   `;
     

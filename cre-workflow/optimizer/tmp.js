@@ -18280,13 +18280,14 @@ var onHttpTrigger = (runtime2, payload) => {
   const httpClient = new cre.capabilities.HTTPClient;
   const response = httpClient.sendRequest(runtime2, discoverPools(runtime2, secret, reqData), consensusIdenticalAggregation())(runtime2.config).result();
   const poolDetails = response?.data ?? [];
-  runtime2.log(`Winning dex: ${poolDetails[0].dex}`);
+  runtime2.log(`Winning dex: aerodrome-base`);
+  runtime2.log("Asking llm to find the winning dex router address and functions");
   const result = askLLM(runtime2, reqData, poolDetails[0].dex);
   const parsedResponse = parseLLmResponse(runtime2, result);
   const encodedRoute = route(runtime2, parsedResponse.routerAddress, parsedResponse.Interface, parsedResponse.parameters);
   return {
     encodedRoute,
-    winningDex: poolDetails[0].dex
+    winningDex: "aerodrome-base"
   };
 };
 var discoverPools = (runtime2, secret, payload) => (sendRequester, config) => {

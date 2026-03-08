@@ -18,7 +18,7 @@ export default function Home() {
           onClick={() => router.push("/swap")}
           className="text-sm px-5 py-2 rounded-full border border-black/10 hover:bg-black/5 transition"
         >
-          Launch App
+          Launch Dapp
         </button>
       </nav>
 
@@ -39,7 +39,7 @@ export default function Home() {
           onClick={() => router.push("/swap")}
           className="mt-12 h-12 px-10 rounded-full bg-black text-white text-sm font-medium hover:bg-black/90 transition"
         >
-          Launch App
+          Launch Dapp
         </button>
       </section>
 
