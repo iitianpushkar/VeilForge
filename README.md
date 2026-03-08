@@ -104,18 +104,6 @@ The result:
 
 # 🧠 Core Architecture
 ![core-architecture](/core-archi.png)
-VeilForge Architecture:
-User
-↓
-ZK Proof Generation
-↓
-Relayer
-↓
-Chainlink CRE Workflow
-↓
-Optimal Route Discovery
-↓
-On-chain Settlement
 
 Routing logic is executed **offchain inside CRE but deterministically verified**.
 
@@ -130,8 +118,9 @@ No solver markets.
 VeilForge uses **commitment-based private wallets**.
 
 A wallet is represented as a commitment:
+```
 walletCommitment = Poseidon2(nullifier, secret, balance)
-
+```
 
 | Component | Purpose |
 |-----------|--------|
@@ -144,12 +133,14 @@ Balances remain **completely private**.
 ---
 
 # 🌍 Identity Layer
+![id-archi](/id-archi.png)
 
 To prevent Sybil attacks while preserving anonymity, VeilForge integrates **World ID**.
 
 Users create an identity commitment:
+```
 identityCommitment = Poseidon2(uuid, secret)
-
+```
 
 After verifying via World ID, the commitment is inserted into an **identity Merkle tree**.
 
@@ -179,8 +170,9 @@ This allows anonymous participation.
 # 👛 Private Wallets
 
 A VeilForge wallet exists only as a **cryptographic commitment**.
+```
 walletCommitment = Poseidon2(nullifier,secret,balance)
-
+```
 
 The wallet does not expose:
 
@@ -209,6 +201,8 @@ No balances are revealed on chain.
 ---
 
 # 🔄 Private Swap Aggregation
+
+![swap-architecture](/swap-archi.png)
 
 When a user wants to swap tokens:
 
