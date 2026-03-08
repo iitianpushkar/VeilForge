@@ -305,6 +305,54 @@ X --> O[Private Settlement]
 ```
 ---
 
+## 📍 Deployed Addresses
+
+### 🏦 Core Contracts (Base mainnet)
+| Contract | Address |
+|---------|---------|
+| **Pool** (entrypoint) | [`0x271a99F3f1B14D6E0C8eBA5Ad304504b0df6BE23`](https://basescan.xyz/address/0x271a99F3f1B14D6E0C8eBA5Ad304504b0df6BE23) |
+| Hasher | [`0x9EF654839817Bfb93d8F2b335802de839ffF94A0`](https://basescan.xyz/address/0x9EF654839817Bfb93d8F2b335802de839ffF94A0) |
+| IdentityVerifier | [`0xbc95641e5A3357531C1AEDAF9207DB2059c8E852`](https://basescan.xyz/address/0xbc95641e5A3357531C1AEDAF9207DB2059c8E852) |
+| IDMixer | [`0xE0B4a2E7923b8f5c6eE8D2ccD9CABb16545b4E71`](https://basescan.xyz/address/0xE0B4a2E7923b8f5c6eE8D2ccD9CABb16545b4E71) |
+| DepositVerifier | [`0x4c15B33EEaBc4a78033E9d48FA3D73A234779819`](https://basescan.xyz/address/0x4c15B33EEaBc4a78033E9d48FA3D73A234779819) |
+| WithdrawVerifier | [`0x6DaB9EEe428a9284c5AF8E9376CB9680118b7d7E`](https://basescan.xyz/address/0x6DaB9EEe428a9284c5AF8E9376CB9680118b7d7E) |
+
+---
+
+## 📁 Project Structure
+
+```text
+veilforge/
+├── contracts/src/
+│   ├── identityMixer/
+│   │   ├── Mixer.sol        # zk-ID Merkle tree & identity commitments
+│   │
+│   ├── pool.sol             # Private liquidity pool + settlement contract
+│
+├── circuits/
+│   ├── identity/src/
+│   │   └── main.nr           # zk-ID circuit
+│   │
+│   ├── deposit/src/
+│   │   └── main.nr           # Deposit proof circuit
+│   │
+│   ├── withdraw/src/
+│   │   └── main.nr           # Withdraw proof circuit
+│
+├── frontend/                 # ui
+│
+├── relayer/
+│   ├── index.ts               # Relayer entry point, executes tx on behalf of users
+│
+├── merkleTreeManager/        # off-chain merkle tree manager for providing merkle proofs for commitments
+|
+├── cre-workflow/
+│   ├── identity              # WorldID verification using api
+|   ├── optimizer             # optimal dex route calculation using coingecko api and LLM
+|
+```
+---
+
 # 🧰 Tech Stack
 
 | Component | Technology |
