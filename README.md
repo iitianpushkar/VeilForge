@@ -1,5 +1,5 @@
 # 🌫️ VeilForge
-## Finding the Optimal Swap Path — Privately
+## Finding the Optimal Swap Route — Privately.
 
 > **VeilForge is a privacy-preserving DEX aggregator powered by Zero Knowledge and Chainlink CRE.**
 
@@ -7,7 +7,7 @@ VeilForge discovers the **best swap route across decentralized exchanges** while
 
 Unlike traditional aggregators that rely on **centralized routing engines or solver networks**, VeilForge computes optimal swap paths **deterministically inside Chainlink CRE workflows**.
 
-This enables **trust-minimized routing with private execution.**
+This enables **trust-minimized intelligent routing with private execution.**
 
 ---
 
@@ -103,13 +103,7 @@ The result:
 ---
 
 # 🧠 Core Architecture
-
-Traditional DEX Aggregator:
-User
-↓
-Centralized Router
-↓
-DEX
+![core-architecture](/core-archi.png)
 VeilForge Architecture:
 User
 ↓
